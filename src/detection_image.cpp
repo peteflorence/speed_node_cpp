@@ -10,7 +10,7 @@
 #include <message_filters/time_synchronizer.h>
 
 #include <cv_bridge/cv_bridge.h>
-
+#include <sstream>
 
 
 class DetectionImagePublisher
@@ -43,7 +43,11 @@ class DetectionImagePublisher
       cv::Point p2(200, 200);
       cv::Scalar color(0, 255, 0);
       cv::rectangle(input_image_ptr->image, p1, p2, color, 2);
+      std::ostringstream strs;
+      strs << speed;
+      std::string speed_str = strs.str();
       cv::putText(input_image_ptr->image, "speed", p1 + cv::Point(5, 20), 0, 0.75, color, 2);
+      cv::putText(input_image_ptr->image, speed_str, p1 + cv::Point(5, 70), 0, 0.75, color, 2);
       image_pub.publish(input_image_ptr->toImageMsg());
   }
 
