@@ -11,6 +11,7 @@
 
 #include <cv_bridge/cv_bridge.h>
 #include <sstream>
+#include <iomanip>
 
 
 class DetectionImagePublisher
@@ -39,15 +40,15 @@ class DetectionImagePublisher
 
   void OnImage(const sensor_msgs::Image::ConstPtr& image_msg) {
       cv_bridge::CvImagePtr input_image_ptr = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::RGB8);
-      cv::Point p1(100, 100);
+      cv::Point p1(225, 150);
       cv::Point p2(200, 200);
-      cv::Scalar color(0, 255, 0);
-      cv::rectangle(input_image_ptr->image, p1, p2, color, 2);
+      cv::Scalar color(255, 255, 255);
+      //cv::rectangle(input_image_ptr->image, p1, p2, color, 2);
       std::ostringstream strs;
-      strs << speed;
+      strs << std::fixed << std::setprecision(2) << speed;
       std::string speed_str = strs.str();
-      cv::putText(input_image_ptr->image, "speed", p1 + cv::Point(5, 20), 0, 0.75, color, 2);
-      cv::putText(input_image_ptr->image, speed_str, p1 + cv::Point(5, 70), 0, 0.75, color, 2);
+      cv::putText(input_image_ptr->image, "m/s", p1 + cv::Point(0,0), 2, 0.75, color, 1);
+      cv::putText(input_image_ptr->image, speed_str, p1 + cv::Point(5, 70), 2, 0.75, color, 1);
       image_pub.publish(input_image_ptr->toImageMsg());
   }
 
