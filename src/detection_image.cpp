@@ -29,7 +29,7 @@ class DetectionImagePublisher
 
   void InitializeSubscribers() {
     image_sub = nh.subscribe("/flight/xtion_rgb_image_raw", 1, &DetectionImagePublisher::OnImage, this);
-    twist_sub = nh.subscribe("twist", 1, &DetectionImagePublisher::OnTwist, this);
+    twist_sub = nh.subscribe("/twist", 1, &DetectionImagePublisher::OnTwist, this);
     //time_sync_ptr = std::make_shared<message_filters::TimeSynchronizer<sensor_msgs::Image, geometry_msgs::TwistStamped>>(*image_sub_ptr, *twist_sub_ptr, 10);
     //time_sync_ptr->registerCallback(boost::bind(&DetectionImagePublisher::SynchronizedCallback, this, _1, _2));
 
@@ -39,8 +39,9 @@ class DetectionImagePublisher
 
   }
 
-  void OnTwist(const geometry_msgs::TwistStamped& twist_msg) {
-
+  void OnTwist(const geometry_msgs::TwistStamped& twist) {
+    speed = sqrt(twist.twist.linear.x*twist.twist.linear.x + twist.twist.linear.y*twist.twist.linear.y + twist.twist.linear.z*twist.twist.linear.z);
+    std::cout << speed << std::endl;
   }
 
  // void SynchronizedCallback(const sensor_msgs::Image::ConstPtr& image_msg, const geometry_msgs::TwistStamped& twist_msg) {
@@ -66,6 +67,7 @@ class DetectionImagePublisher
   
   ros::Subscriber image_sub;
   ros::Subscriber twist_sub;
+  double speed;
 };
 
 
