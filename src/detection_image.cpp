@@ -11,6 +11,8 @@
 
 #include <cv_bridge/cv_bridge.h>
 
+
+
 class DetectionImagePublisher
 {
   public:
@@ -28,7 +30,7 @@ class DetectionImagePublisher
   }
 
   void InitializeSubscribers() {
-    image_sub = nh.subscribe("/flight/xtion_rgb_image_raw", 1, &DetectionImagePublisher::OnImage, this);
+    image_sub = nh.subscribe("/flight/r200/color/image_raw", 1, &DetectionImagePublisher::OnImage, this);
     twist_sub = nh.subscribe("/twist", 1, &DetectionImagePublisher::OnTwist, this);
     //time_sync_ptr = std::make_shared<message_filters::TimeSynchronizer<sensor_msgs::Image, geometry_msgs::TwistStamped>>(*image_sub_ptr, *twist_sub_ptr, 10);
     //time_sync_ptr->registerCallback(boost::bind(&DetectionImagePublisher::SynchronizedCallback, this, _1, _2));
@@ -36,7 +38,13 @@ class DetectionImagePublisher
   }
 
   void OnImage(const sensor_msgs::Image::ConstPtr& image_msg) {
-
+      cv_bridge::CvImagePtr input_image_ptr = cv_bridge::toCvCopy(image_msg, sensor_msgs::image_encodings::RGB8);
+      cv::Point p1(100, 100);
+      cv::Point p2(200, 200);
+      cv::Scalar color(0, 255, 0);
+      cv::rectangle(input_image_ptr->image, p1, p2, color, 2);
+      cv::putText(input_image_ptr->image, "speed", p1 + cv::Point(5, 20), 0, 0.75, color, 2);
+      image_pub.publish(input_image_ptr->toImageMsg());
   }
 
   void OnTwist(const geometry_msgs::TwistStamped& twist) {
@@ -67,7 +75,7 @@ class DetectionImagePublisher
   
   ros::Subscriber image_sub;
   ros::Subscriber twist_sub;
-  double speed;
+  double speed = 0.0;
 };
 
 
